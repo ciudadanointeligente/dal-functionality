@@ -147,39 +147,30 @@ add_pais_menus();
 
 // This function gets called in edit-form-advanced.php
 function select_dal_country($post) {
- 
-	echo '<input type="hidden" name="taxonomy_noncename" id="taxonomy_noncename" value="' . 
-    		wp_create_nonce( 'taxonomy_pais' ) . '" />';
- 
- 
-	// Get all pais taxonomy terms
-	$paises = get_terms('pais', 'hide_empty=0'); 
- 
-?>
-<select name='post_pais' id='post_pais'>
-	<!-- Display paises as options -->
-    <?php 
-        $names = wp_get_object_terms($post->ID, 'pais'); 
-        ?>
-        <option class='pais-option' value='' 
-        <?php if (!count($names)) echo "selected";?>><?php __("None",'dal-functionality'); ?></option>
-        <?php
-	foreach ($paises as $pais) {
-		if (!is_wp_error($names) && !empty($names) && !strcmp($pais->slug, $names[0]->slug)) 
-			echo "<option class='pais-option' value='" . $pais->slug . "' selected>" . $pais->name . "</option>\n"; 
-		
-		else
-			echo "<option class='pais-option' value='" . $pais->slug . "'>" . $pais->name . "</option>\n"; 
-	}
 
-   ?>
-</select>    
+	echo '<input type="hidden" name="taxonomy_noncename" id="taxonomy_noncename" value="' . wp_create_nonce( 'taxonomy_pais' ) . '" />';
+
+	// Get all pais taxonomy terms
+	$paises = get_terms('pais', 'hide_empty=0');  
+  $names = wp_get_object_terms($post->ID, 'pais'); 
+?>
+  <select name='post_pais' id='post_pais'>
+    <!-- Display paises as options -->
+    <option class='pais-option' value='' <?php echo (!count($names)) ? "selected=selected" : '' ?>><?php __("None",'dal-functionality'); ?></option>
+    <?php
+    foreach ($paises as $pais) {
+      if (!is_wp_error($names) && !empty($names) && !strcmp($pais->slug, $names[0]->slug)) 
+        echo "<option class='pais-option' value='" . $pais->slug . "' selected=selected>" . $pais->name . "</option>\n"; 
+      else
+        echo "<option class='pais-option' value='" . $pais->slug . "'>" . $pais->name . "</option>\n"; 
+    }
+    ?>
+  </select>    
 <?php
 }
 
 function save_taxonomy_data($post_id) {
-// verify this came from our screen and with proper authorization.
- 
+  // verify this came from our screen and with proper authorization.
  	if ( !wp_verify_nonce( $_POST['taxonomy_noncename'], 'taxonomy_pais' )) {
     	return $post_id;
   	}
@@ -208,36 +199,20 @@ function save_taxonomy_data($post_id) {
 	return $pais;
 }
 
-
-//
-//======== 2- Let's register our cuntry page custom sidebar
-//
 if ( function_exists ('register_sidebar')) { 
-   register_sidebar(array(
-  'name' => __( 'Country page sidebar' ),
-  'id' => 'right-sidebar',
-  'description' => __( 'Widgets in this area will be shown on the country pages.' ),
-  'before_title' => '<h3>',
-  'after_title' => '</h3>'
+  register_sidebar(array(
+    'name' => __( 'Country page sidebar' ),
+    'id' => 'right-sidebar',
+    'description' => __( 'Widgets in this area will be shown on the country pages.' ),
+    'before_title' => '<h3>',
+    'after_title' => '</h3>'
   ));
 }
 
-/* Puts content above the asides
-function my_above_asides() { ?>
-put the code to display your content here
-<?php }
-
-add_action('thematic_abovemainasides', 'my_above_asides');
-*/
-
-
-//
-//========3-Let's create our "sponsors" CPT
-//
 add_action ('init', 'create_organizer_pt' );
 
 function create_organizer_pt(){
-   register_post_type( 'dal_organizers',
+  register_post_type( 'dal_organizers',
     array(
       'labels' => array(
         'name' => __( 'Country Organizers','dal-functionality' ),
@@ -339,23 +314,12 @@ function create_dal_post_type() {
   );
 }
 
-
-//
-//
-//======================== add appcountry
-//
-//
-//
-// 4- Agrega taxonomía "appcountry" con dropdown para cpt apps./ importante para que no se confundan las queries de apps con las del blog
-//
- 
-
- function add_appcountry_box() {
+function add_appcountry_box() {
   remove_meta_box('tagsdiv-appcountry', 'portfolio','core');
   add_meta_box('appcountry_box_ID', __('Country of the App'), 'appcountry_styling_function','portfolio','side','high');
- } 
+} 
  
- function add_appcountry_menus() {
+function add_appcountry_menus() {
  
   if ( ! is_admin() )
     return;
@@ -364,20 +328,17 @@ function create_dal_post_type() {
 
   //Use the save_post action to save new post data 
   add_action('save_post', 'save_appcountry_data');
- }
+}
  
 add_appcountry_menus();
 
 // This function gets called in edit-form-advanced.php
 function appcountry_styling_function($post) {
- 
-  echo '<input type="hidden" name="taxonomy_noncename" id="taxonomy_noncename" value="' . 
-        wp_create_nonce( 'taxonomy_appcountry' ) . '" />';
- 
- 
+
+  echo '<input type="hidden" name="taxonomy_noncename" id="taxonomy_noncename" value="' . wp_create_nonce( 'taxonomy_appcountry' ) . '" />';
+
   // Get all appcountry taxonomy terms
   $appcountryes = get_terms('appcountry', 'hide_empty=0'); 
- 
 ?>
 <select name='post_appcountry' id='post_appcountry'>
   <!-- Display appcountryes as options -->
@@ -401,8 +362,7 @@ function appcountry_styling_function($post) {
 }
 
 function save_appcountry_data($post_id) {
-// verify this came from our screen and with proper authorization.
- 
+  // verify this came from our screen and with proper authorization.
   if ( !wp_verify_nonce( $_POST['taxonomy_noncename'], 'taxonomy_appcountry' )) {
       return $post_id;
     }
@@ -431,23 +391,11 @@ function save_appcountry_data($post_id) {
   return $appcountry; 
 }
 
-
-//
-//=========== 5- Include reusable metaboxes for apps
-
-
 require_once( dirname( __FILE__ ) . '/includes/metabox_code/functions/add_portfolio_meta_box.php' );
-
-//
-//=========== 6- Include reusable metaboxes for dal_countries
-
-
 require_once( dirname( __FILE__ ) . '/includes/metabox_code/functions/dal_country_meta_box.php' );
-
 require_once( dirname( __FILE__ ) . '/includes/metabox_code/functions/organizer_metabox.php' );
+require_once( dirname( __FILE__ ) . '/includes/metabox_code/functions/sponsor_metabox.php' );
 
-
-//===== Add HOME hero space menu
 function register_dal_menus() {
   register_nav_menus(
     array( 'hero-menu' => __( 'Hero Menu' ) )
